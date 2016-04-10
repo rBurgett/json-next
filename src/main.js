@@ -1,3 +1,5 @@
+import 'babel-polyfill';
+
 const JsonNext = function() {
 
     this.stringify = (data) => {
