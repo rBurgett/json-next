@@ -2,7 +2,7 @@
   "name": "json-next",
   "version": "0.1.0",
   "description": "json-next",
-  "main": "main.js",
+  "main": "./dist/main.js",
   "scripts": {
     "build": "babel src --out-dir dist",
     "watch": "babel src --watch --out-dir dist",
