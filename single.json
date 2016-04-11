@@ -1,0 +1,76 @@
+{
+  "json_next_paths": [
+    [
+      [
+        "o",
+        "anything"
+      ],
+      [
+        "o",
+        "someMap"
+      ],
+      [
+        "m",
+        ""
+      ]
+    ],
+    [
+      [
+        "o",
+        "anything"
+      ],
+      [
+        "o",
+        "someMap"
+      ],
+      [
+        "m",
+        "some"
+      ],
+      [
+        "m",
+        ""
+      ]
+    ],
+    [
+      [
+        "o",
+        "anything"
+      ],
+      [
+        "o",
+        "someMap"
+      ],
+      [
+        "m",
+        "thing"
+      ],
+      [
+        "s",
+        ""
+      ]
+    ]
+  ],
+  "data": {
+    "anything": {
+      "someMap": [
+        [
+          "some",
+          [
+            [
+              "some",
+              "thing"
+            ]
+          ]
+        ],
+        [
+          "thing",
+          [
+            "any",
+            "thing"
+          ]
+        ]
+      ]
+    }
+  }
+}
