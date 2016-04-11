@@ -7,7 +7,7 @@ const mapifySetifyByPath = (data, pathArr) => {
 
     let evalStr = 'data';
     pathArr.forEach(([ type, k ], i) => {
-        console.log(evalStr);
+
         if(type === 'm') {
             if(i === pathArr.length - 1) {
                 eval(`${evalStr} = new Map(${evalStr})`);
@@ -108,8 +108,6 @@ const JsonNext = {
 
             const data = origData.data;
             const pathsArr = origData.json_next_paths.concat().sort((a, b) => a.length > b.length);
-
-            // console.log('pathsArr is', JSON.stringify(origData.json_next_paths));
 
             return pathsArr
                 .reduce((dataObj, pathArr) => {
