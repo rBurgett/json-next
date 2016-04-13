@@ -2,7 +2,6 @@
 
 import 'should';
 import jsonNext from '../src/main';
-// import fs from 'fs';
 
 describe('JsonNext', function() {
 
