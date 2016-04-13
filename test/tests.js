@@ -2,7 +2,7 @@
 
 import 'should';
 import jsonNext from '../src/main';
-import fs from 'fs';
+// import fs from 'fs';
 
 describe('JsonNext', function() {
 
@@ -25,7 +25,7 @@ describe('JsonNext', function() {
     describe('stringify', function() {
 
         it('should take a JavaScript data object and return a JSON string', () => {
-            jsonNext.stringify({name: 'Ryan', age: 30}).should.be.String();
+            jsonNext.stringify({name: 'Benjamin', age: 37}).should.be.String();
         });
 
     });
@@ -33,37 +33,27 @@ describe('JsonNext', function() {
     describe('parse', function() {
 
         const nestedDataObj = {
-            // something: ['one', 'two', 'three'],
+            something: ['one', 'two', 'three'],
             anything: {
-                // someMap: new Map([
-                //     ['something', new Map([
-                //         ['set1', new Set(['one', 'two', 'three'])]
-                //     ])],
-                //     ['else', new Map([
-                //         ['someSet', new Set(['one', 'two', 'three'])]
-                //     ] )]
-                // ]),
                 someMap: new Map([
                     [ 'some', new Map([ ['some', 'thing'] ]) ],
-                    // [ 'other', new Map([['some', new Set(['some', 'thing']) ]]) ],
-                    [ 'thing', new Set(['any', 'thing']) ]
-                    // ['another', 'thing']
-                ])
-                // someSet: new Set( [new Set(['Benjamin', 'Jake']), new Set(['Miles', 'Molly'])] )
-            }
-            // nums: [5435, 542543, 542, 54, 325, 42, 54, 325, 42],
-            // arr: [
-            //     [543, 545, 54, 325, 4325, 432, 543, 254, 325, 34],
-            //     [159, 154 ,891, 4891, 18593, 1852, 888],
-            //     [543, 545, 54, 325, 4325, 432, 543, 254, 325, 34],
-            //     {
-            //         something: 'here',
-            //         too: {here: ['is', 'an', {}]}
-            //     }
-            // ]
+                    [ 'other', new Map([['some', new Set(['some', 'thing']) ]]) ],
+                    [ 'thing', new Set(['any', 'thing', new Map([['some', new Set(['some', 'thing']) ]])]) ],
+                    [ 'another', 'thing' ]
+                ]),
+                someSet: new Set( [new Set(['Benjamin', 'Jake']), new Set(['Miles', 'Molly'])] )
+            },
+            nums: [5435, 542543, 542, 54, 325, 42, 54, 325, 42],
+            arr: [
+                [543, 545, 54, 325, 4325, 432, 543, 254, 325, 34],
+                [159, 154 ,891, 4891, 18593, 1852, 888],
+                [543, 545, 54, 325, 4325, 432, 543, 254, 325, 34],
+                {
+                    something: 'here',
+                    too: {here: ['is', 'an', {}]}
+                }
+            ]
         };
-
-        // console.log(nestedDataObj.anything.someMap.get('something'));
 
         it('should take a JSON string and return a JavaScript data object', () => {
             const jsonStr = jsonNext.stringify(myObj);
@@ -85,13 +75,16 @@ describe('JsonNext', function() {
             jsonNext.stringify(dataNum).should.equal(JSON.stringify({json_next_paths: [], data: dataNum}));
             const jsonString = '["one", "two", "three"]';
             JSON.stringify(JSON.parse(jsonString)).should.equal(JSON.stringify(jsonNext.parse(jsonString)));
+            const parentMap = new Map([ ['someKey', 'someValue'], ['anotherKey', 'anotherValue'] ]);
+            const parentMapJson = jsonNext.stringify(parentMap);
+            parentMapJson.should.equal(jsonNext.stringify(jsonNext.parse(parentMapJson)));
+            const parentSet = new Set(['someValue', 'anotherValue']);
+            const parentSetJson = jsonNext.stringify(parentSet);
+            parentSetJson.should.equal(jsonNext.stringify(jsonNext.parse(parentSetJson)));
 
-            // jsonNext.parse(jsonNext.stringify(nestedDataObj));
+            jsonNext.stringify(nestedDataObj).should.equal(jsonNext.stringify(jsonNext.parse(jsonNext.stringify(nestedDataObj))));
 
-            fs.writeFileSync('single.json', jsonNext.stringify(nestedDataObj, {pretty: true}), 'utf8');
-            fs.writeFileSync('multiple.json', jsonNext.stringify(jsonNext.parse(jsonNext.stringify(nestedDataObj)), {pretty: true}), 'utf8');
-
-            jsonNext.stringify(nestedDataObj, {pretty: true}).should.equal(jsonNext.stringify(jsonNext.parse(jsonNext.stringify(nestedDataObj)), {pretty: true}));
+            jsonNext.parse(jsonNext.stringify(nestedDataObj)).anything.someMap.get('thing').has('any').should.be.True();
 
         });
 

@@ -1,56 +1,47 @@
-/* eslint no-unused-vars:1 */
-
 import 'babel-polyfill';
 import _ from 'lodash';
 
+if(!_.isMap) _.isMap = (item) => _.isObject(item) && _.isFunction(item.get) && _.isFunction(item.set) && _.isFunction(item.entries);
+if(!_.isSet) _.isSet = (item) => _.isObject(item) && _.isFunction(item.has) && _.isFunction(item.add) && _.isFunction(item.entries);
+
 const mapifySetifyByPath = (data, pathArr) => {
 
-    let evalStr = 'data';
-    pathArr.forEach(([ type, k ], i) => {
+    let makeType;
 
-        if(type === 'm') {
-            if(i === pathArr.length - 1) {
-                eval(`${evalStr} = new Map(${evalStr})`);
+    let pathStr = pathArr.reduce((str, [ type, key ], i) => {
+        if(i < pathArr.length - 1) {
+
+            if(type === 'm') {
+                let mapArr;
+                eval(`mapArr = ${str}`);
+                const mapIdx = mapArr.findIndex(([ k ]) => k === key);
+                return `${str}[${mapIdx}][1]`;
+            } else if(type === 'o'){
+                return `${str}['${key}']`;
             } else {
-                let innerObj;
-
-                const getStr = `${evalStr}.get('${k}')`;
-                eval(`innerObj = ${getStr}`);
-
-                const newObj = mapifySetifyByPath(innerObj, pathArr.slice(i + 1));
-
-                const setStr = `${evalStr}.set('${k}', newObj)`;
-                eval(setStr);
-
+                return `${str}[${key}]`;
             }
-        } else if(type === 's') {
-            if(i === pathArr.length - 1) {
-                eval(`${evalStr} = new Set(${evalStr})`);
-            } else {
 
-                let setArr;
-                const getSetArrStr = `setArr = [...${evalStr}]`;
-                eval(getSetArrStr);
-
-                setArr[k] = mapifySetifyByPath(setArr[k], pathArr.slice(i + 1));
-
-                const toSetStr = `${evalStr} = new Set(setArr)`;
-                eval(toSetStr);
-
-            }
         } else {
-            evalStr = evalStr + `['${k}']`;
-            // dataObjToModify = dataObjToModify ? data[k] : dataObjToModify[k];
+            makeType = type;
+            return str;
         }
-    });
+    }, 'data');
+
+    if(makeType === 'm') {
+        let makeMapStr = `${pathStr} = new Map(${pathStr})`;
+        eval(makeMapStr);
+    } else if(makeType === 's') {
+        let makeSetStr = `${pathStr} = new Set(${pathStr})`;
+        eval(makeSetStr);
+    }
+
     return data;
 };
 
 const JsonNext = {
 
     stringify(data, options = {async: false, pretty: false}) {
-
-        // o, a, m, s
 
         let msArr = [];
 
@@ -86,7 +77,7 @@ const JsonNext = {
         };
 
         const jsonStr = recStringify(data);
-        const finalJsonStr = `{"json_next_paths":${JSON.stringify(msArr.sort((a, b) => a.length > b.length))},"data":${jsonStr}}`;
+        const finalJsonStr = `{"json_next_paths":${JSON.stringify(msArr.sort((a, b) => a.length < b.length))},"data":${jsonStr}}`;
 
         if(options.pretty) {
             return JSON.stringify(JSON.parse(finalJsonStr), null, '  ');
@@ -107,7 +98,7 @@ const JsonNext = {
         if(_.isPlainObject(origData) && _.isArray(origData.json_next_paths)) {
 
             const data = origData.data;
-            const pathsArr = origData.json_next_paths.concat().sort((a, b) => a.length > b.length);
+            const pathsArr = origData.json_next_paths.concat().sort((a, b) => a.length < b.length);
 
             return pathsArr
                 .reduce((dataObj, pathArr) => {

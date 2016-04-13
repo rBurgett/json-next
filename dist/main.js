@@ -16,19 +16,29 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
+if (!_lodash2.default.isMap) _lodash2.default.isMap = function (item) {
+    return _lodash2.default.isObject(item) && _lodash2.default.isFunction(item.get) && _lodash2.default.isFunction(item.set) && _lodash2.default.isFunction(item.entries);
+};
+if (!_lodash2.default.isSet) _lodash2.default.isSet = function (item) {
+    return _lodash2.default.isObject(item) && _lodash2.default.isFunction(item.has) && _lodash2.default.isFunction(item.add) && _lodash2.default.isFunction(item.entries);
+};
+
 var mapifySetifyByPath = function mapifySetifyByPath(data, pathArr) {
 
     var evalStr = 'data';
+    var skip = false;
     pathArr.forEach(function (_ref, i) {
         var _ref2 = _slicedToArray(_ref, 2);
 
         var type = _ref2[0];
         var k = _ref2[1];
 
-        console.log(evalStr);
+
         if (type === 'm') {
             if (i === pathArr.length - 1) {
-                eval(evalStr + ' = new Map(' + evalStr + ')');
+                var newMapStr = evalStr + ' = new Map(' + evalStr + ')';
+                if (!skip) eval(newMapStr);
+                skip = false;
             } else {
                 var innerObj = void 0;
 
@@ -36,27 +46,56 @@ var mapifySetifyByPath = function mapifySetifyByPath(data, pathArr) {
                 eval('innerObj = ' + getStr);
 
                 var newObj = mapifySetifyByPath(innerObj, pathArr.slice(i + 1));
+                skip = true;
 
                 var setStr = evalStr + '.set(\'' + k + '\', newObj)';
                 eval(setStr);
             }
         } else if (type === 's') {
             if (i === pathArr.length - 1) {
-                eval(evalStr + ' = new Set(' + evalStr + ')');
+
+                var newSetStr = evalStr + ' = new Set(' + evalStr + ')';
+
+                if (!skip) eval(newSetStr);
+
+                skip = false;
             } else {
 
-                var setArr = void 0;
-                var getSetArrStr = 'setArr = [...' + evalStr + ']';
-                eval(getSetArrStr);
+                var setArr = [];
+                var setEntries = eval(evalStr + '.values()');
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = setEntries[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var val = _step.value;
+
+                        setArr = setArr.concat([val]);
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
 
                 setArr[k] = mapifySetifyByPath(setArr[k], pathArr.slice(i + 1));
+                skip = true;
 
                 var toSetStr = evalStr + ' = new Set(setArr)';
                 eval(toSetStr);
             }
         } else {
             evalStr = evalStr + ('[\'' + k + '\']');
-            // dataObjToModify = dataObjToModify ? data[k] : dataObjToModify[k];
         }
     });
     return data;
@@ -136,12 +175,10 @@ var JsonNext = {
 
         if (_lodash2.default.isPlainObject(origData) && _lodash2.default.isArray(origData.json_next_paths)) {
 
-            var data = origData.data;
+            var data = _lodash2.default.isPlainObject(origData.data) ? Object.assign({}, origData.data) : _lodash2.default.isArray(origData.data) ? [].concat(origData.data) : origData.data;
             var pathsArr = origData.json_next_paths.concat().sort(function (a, b) {
                 return a.length > b.length;
             });
-
-            // console.log('pathsArr is', JSON.stringify(origData.json_next_paths));
 
             return pathsArr.reduce(function (dataObj, pathArr) {
                 return mapifySetifyByPath(dataObj, pathArr);
@@ -153,3 +190,126 @@ var JsonNext = {
 };
 
 exports.default = Object.create(JsonNext);
+
+// import 'babel-polyfill';
+// import _ from 'lodash';
+//
+// const mapifySetifyByPath = (data, pathArr) => {
+//
+//     let evalStr = 'data';
+//     pathArr.forEach(([ type, k ], i) => {
+//
+//         if(type === 'm') {
+//             if(i === pathArr.length - 1) {
+//                 eval(`${evalStr} = new Map(${evalStr})`);
+//             } else {
+//                 let innerObj;
+//
+//                 const getStr = `${evalStr}.get('${k}')`;
+//                 eval(`innerObj = ${getStr}`);
+//
+//                 const newObj = mapifySetifyByPath(innerObj, pathArr.slice(i + 1));
+//
+//                 const setStr = `${evalStr}.set('${k}', newObj)`;
+//                 eval(setStr);
+//
+//             }
+//         } else if(type === 's') {
+//             if(i === pathArr.length - 1) {
+//                 eval(`${evalStr} = new Set(${evalStr})`);
+//             } else {
+//
+//                 let setArr;
+//                 const getSetArrStr = `setArr = [...${evalStr}]`;
+//                 eval(getSetArrStr);
+//
+//                 setArr[k] = mapifySetifyByPath(setArr[k], pathArr.slice(i + 1));
+//
+//                 const toSetStr = `${evalStr} = new Set(setArr)`;
+//                 eval(toSetStr);
+//
+//             }
+//         } else {
+//             evalStr = evalStr + `['${k}']`;
+//             // dataObjToModify = dataObjToModify ? data[k] : dataObjToModify[k];
+//         }
+//     });
+//     return data;
+// };
+//
+// const JsonNext = {
+//
+//     stringify(data, options = {async: false, pretty: false}) {
+//
+//         // o, a, m, s
+//
+//         let msArr = [];
+//
+//         const recStringify = (item, pathArr = []) => {
+//
+//             if(_.isArray(item)) {
+//                 return '[' + item.map((d, i) => recStringify(d, pathArr.concat([ ['a', i] ]))).join(',') + ']';
+//             } else if(_.isPlainObject(item)) {
+//                 return '{' + Object.keys(item).map(k => `"${k}":` + recStringify(item[k], pathArr.concat([ ['o', k] ]))).join(',') + '}';
+//             } else if(_.isMap(item)) {
+//
+//                 msArr = msArr.concat([pathArr.concat([ ['m', ''] ])]);
+//
+//                 item.forEach((val, key) => {
+//                     if(!_.isString(key)) throw new Error('A Map can only be encoded as JSON if all keys are strings');
+//                 });
+//
+//                 const arr = [...item];
+//
+//                 return '[' + arr.map(([ key, val ]) => `["${key}",${recStringify(val, pathArr.concat([ ['m', key] ]))}]`).join(',') + ']';
+//
+//             } else if(_.isSet(item)) {
+//
+//                 msArr = msArr.concat([pathArr.concat([ ['s', ''] ])]);
+//
+//                 const arr = [...item];
+//
+//                 return '[' + arr.map((d, i) => recStringify(d, pathArr.concat([ ['s', i] ]))).join(',') + ']';
+//
+//             } else {
+//                 return JSON.stringify(item);
+//             }
+//         };
+//
+//         const jsonStr = recStringify(data);
+//         const finalJsonStr = `{"json_next_paths":${JSON.stringify(msArr.sort((a, b) => a.length > b.length))},"data":${jsonStr}}`;
+//
+//         if(options.pretty) {
+//             return JSON.stringify(JSON.parse(finalJsonStr), null, '  ');
+//         } else {
+//             return finalJsonStr;
+//         }
+//     },
+//
+//     parse(jsonStr) {
+//
+//         let origData;
+//         try {
+//             origData = JSON.parse(jsonStr);
+//         } catch(e) {
+//             throw new Error(e);
+//         }
+//
+//         if(_.isPlainObject(origData) && _.isArray(origData.json_next_paths)) {
+//
+//             const data = origData.data;
+//             const pathsArr = origData.json_next_paths.concat().sort((a, b) => a.length > b.length);
+//
+//             return pathsArr
+//                 .reduce((dataObj, pathArr) => {
+//                     return mapifySetifyByPath(dataObj, pathArr);
+//                 }, data);
+//
+//         } else {
+//             return origData;
+//         }
+//     }
+//
+// };
+//
+// export default Object.create(JsonNext);
