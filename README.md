@@ -56,7 +56,8 @@ console.log(myNewObj);
 ```
 
 ### Limitations
-JsonNext can only handle values which can be serialized. This is less a limitation of JsonNext and more a fact of life. So, only Maps which use strings as keys can be encoded. Also, obviously, symbols cannot be encoded and neither can WeakMaps and WeakSets.
+1. Serialization - JsonNext can only handle values which can be serialized. This is less a limitation of JsonNext and more a fact of life. So, only Maps which use strings as keys can be encoded. Also, obviously, symbols cannot be encoded and neither can WeakMaps and WeakSets.
+2. Recursion - JsonNext currently uses recursion in the `stringify` method. This allows you to quickly, deeply, and synchronously stringify all of your data (just like `JSON.stringify`). But, this also means there are limitations on how large your data sets can be. I plan to add an `async` flag to the options object which will allow you to encode asynchronously. It will be non-blocking and remove any limitations to data size.
 
 ### npm Scripts
 Run the tests:
