@@ -30,8 +30,8 @@ const myObj = {
   someMap: new Map([ ['name', 'Ryan'], ['wife', 'Hannah'] ]),
   someSet: new Set([ 5325, 24324, 41243, 4, 525, 2, 54325, 432, 5 ]),
   mapOfSets: new Map([
-    ['set1': new Set([ 'something', 'else', 'here' ])],
-    ['set2': new Set([ new Map(), new Map(), new Map() ])]
+    ['set1', new Set([ 'something', 'else', 'here' ])],
+    ['set2', new Set([ new Map(), new Map(), new Map() ])]
   ]),
   num: 300,
   obj: {some: 'object'}
