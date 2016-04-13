@@ -7,6 +7,9 @@ JsonNext is an npm package for encoding and parsing both current and next-genera
 npm install json-next
 ```
 
+### Dependencies
+In order to use JsonNext, you must be in an environment which has Maps and Sets. Many browsers do not support those yet, so you will need to use something like [`babel-polyfill`](https://babeljs.io/docs/usage/polyfill/) to add those data types.
+
 ### Why?
 First there was ES5, then ES6, then ES2015/16/17 or just ESNext. JavaScript is moving forward and we now have `Set` and `Map` data types. These are wonderful to use, but cannot be directly serialized as JSON. JsonNext gives you the same basic `stringify` and `parse` methods that you are used to using with JavaScript, but allows you to pass in data which includes Sets and Maps, nested as deeply as you want. Currently, if you pass a `Map` or `Set` into `JSON.stringify()`, they will be encoded as `{}` and all your data will be lost. You can write your own methods for converting your data into traditional data types if you would like, or you can just use jsonNext.
 
@@ -53,7 +56,7 @@ console.log(myNewObj);
 ```
 
 ### Limitations
-JsonNext can only handle values which can be serialized. This is less a limitation of JsonNext and more a fact of life. So, only maps which use strings as keys can be encoded. Also, obviously, symbols cannot be encoded and neither can WeakMaps and WeakSets.
+JsonNext can only handle values which can be serialized. This is less a limitation of JsonNext and more a fact of life. So, only Maps which use strings as keys can be encoded. Also, obviously, symbols cannot be encoded and neither can WeakMaps and WeakSets.
 
 ### npm Scripts
 Run the tests:
