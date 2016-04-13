@@ -1,3 +1,9 @@
+/**
+* Encode and parse JavaScript data types including Map and Set
+* @module json-next
+* @type {Object}
+*/
+
 import 'babel-polyfill';
 import _ from 'lodash';
 
@@ -39,9 +45,18 @@ const mapifySetifyByPath = (data, pathArr) => {
     return data;
 };
 
+/**
+* Object with methods for encoding and parsing JavaScript data objects
+*/
 const JsonNext = {
 
-    stringify(data, options = {async: false, pretty: false}) {
+    /**
+    * Encode a JavaScript data object as JSON
+    * @param {*} - The JavaScript data to be encoded
+    * @param {Object} [options={pretty: false}] - An optional options object
+    * @return {string} - Returns a JSON string
+    */
+    stringify(data, options = {pretty: false}) {
 
         let msArr = [];
 
@@ -86,6 +101,11 @@ const JsonNext = {
         }
     },
 
+    /**
+    * Parse a JSON string
+    * @param {string} - The JSON string to be parsed
+    * @return {*} - Returns the parsed data
+    */
     parse(jsonStr) {
 
         let origData;
