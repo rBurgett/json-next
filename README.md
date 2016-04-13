@@ -1,6 +1,6 @@
 # json-next
 
-JsonNext is an npm package for encoding and parsing both current and next-generation JavaScript data objects including Maps and Sets.
+JsonNext is an npm package for encoding (as JSON) and parsing both current and next-generation JavaScript data objects including Maps and Sets.
 
 ### Installation
 ```
