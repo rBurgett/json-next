@@ -1,7 +1,7 @@
 {
   "name": "json-next",
   "version": "0.1.0",
-  "description": "json-next",
+  "description": "Encode (as JSON) and parse both current and next-generation JavaScript data objects including Maps and Sets.",
   "main": "./dist/main.js",
   "scripts": {
     "build": "babel src --out-dir dist",
