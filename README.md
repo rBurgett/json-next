@@ -16,11 +16,11 @@ First there was ES5, then ES6, then ES2015/16/17 or just ESNext. JavaScript is m
 ### How?
 First, import/require the lib:
 ```
-import jsonStream from 'json-stream';
+import jsonNext from 'json-next';
 ```
 Or, if you are using the older syntax:
 ```
-var jsonStream = require('json-stream').default;
+var jsonNext = require('json-next').default;
 ```
 Take some data and encode it as JSON.
 ```
