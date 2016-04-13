@@ -1,5 +1,6 @@
 /* global describe, it */
 
+import 'babel-polyfill';
 import 'should';
 import jsonNext from '../src/main';
 

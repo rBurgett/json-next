@@ -4,11 +4,10 @@
 * @type {Object}
 */
 
-import 'babel-polyfill';
 import _ from 'lodash';
 
-if(!_.isMap) _.isMap = (item) => _.isObject(item) && _.isFunction(item.get) && _.isFunction(item.set) && _.isFunction(item.entries);
-if(!_.isSet) _.isSet = (item) => _.isObject(item) && _.isFunction(item.has) && _.isFunction(item.add) && _.isFunction(item.entries);
+// if(!_.isMap) _.isMap = (item) => _.isObject(item) && _.isFunction(item.get) && _.isFunction(item.set) && _.isFunction(item.entries);
+// if(!_.isSet) _.isSet = (item) => _.isObject(item) && _.isFunction(item.has) && _.isFunction(item.add) && _.isFunction(item.entries);
 
 const mapifySetifyByPath = (data, pathArr) => {
 

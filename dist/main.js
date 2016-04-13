@@ -10,8 +10,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @type {Object}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 
-require('babel-polyfill');
-
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -20,12 +18,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-if (!_lodash2.default.isMap) _lodash2.default.isMap = function (item) {
-    return _lodash2.default.isObject(item) && _lodash2.default.isFunction(item.get) && _lodash2.default.isFunction(item.set) && _lodash2.default.isFunction(item.entries);
-};
-if (!_lodash2.default.isSet) _lodash2.default.isSet = function (item) {
-    return _lodash2.default.isObject(item) && _lodash2.default.isFunction(item.has) && _lodash2.default.isFunction(item.add) && _lodash2.default.isFunction(item.entries);
-};
+// if(!_.isMap) _.isMap = (item) => _.isObject(item) && _.isFunction(item.get) && _.isFunction(item.set) && _.isFunction(item.entries);
+// if(!_.isSet) _.isSet = (item) => _.isObject(item) && _.isFunction(item.has) && _.isFunction(item.add) && _.isFunction(item.entries);
 
 var mapifySetifyByPath = function mapifySetifyByPath(data, pathArr) {
 
