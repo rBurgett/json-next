@@ -37,7 +37,5 @@
     "mocha": "^2.4.5",
     "should": "^8.3.0"
   },
-  "dependencies": {
-    "lodash": "^4.9.0"
-  }
+  "dependencies": {}
 }

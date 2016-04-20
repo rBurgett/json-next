@@ -4,10 +4,11 @@
 * @type {Object}
 */
 
-import _ from 'lodash';
-
-// if(!_.isMap) _.isMap = (item) => _.isObject(item) && _.isFunction(item.get) && _.isFunction(item.set) && _.isFunction(item.entries);
-// if(!_.isSet) _.isSet = (item) => _.isObject(item) && _.isFunction(item.has) && _.isFunction(item.add) && _.isFunction(item.entries);
+const isArray = (item) => (typeof item === 'object') && (Array.isArray(item) === true);
+const isPlainObject = (item) => (typeof item === 'object') && (Array.isArray(item) === false) && !item.entries;
+const isMap = (item) => (typeof item === 'object') && (Array.isArray(item) === false) && (typeof item.entries === 'function') && (typeof item.get === 'function') && (typeof item.set === 'function');
+const isSet = (item) => (typeof item === 'object') && (Array.isArray(item) === false) && (typeof item.entries === 'function') && (typeof item.add === 'function');
+const isString = (item) => typeof item === 'string';
 
 const mapifySetifyByPath = (data, pathArr) => {
 
@@ -61,23 +62,23 @@ const JsonNext = {
 
         const recStringify = (item, pathArr = []) => {
 
-            if(_.isArray(item)) {
+            if(isArray(item)) {
                 return '[' + item.map((d, i) => recStringify(d, pathArr.concat([ ['a', i] ]))).join(',') + ']';
-            } else if(_.isPlainObject(item)) {
+            } else if(isPlainObject(item)) {
                 return '{' + Object.keys(item).map(k => `"${k}":` + recStringify(item[k], pathArr.concat([ ['o', k] ]))).join(',') + '}';
-            } else if(_.isMap(item)) {
+            } else if(isMap(item)) {
 
                 msArr = msArr.concat([pathArr.concat([ ['m', ''] ])]);
 
                 item.forEach((val, key) => {
-                    if(!_.isString(key)) throw new Error('A Map can only be encoded as JSON if all keys are strings');
+                    if(!isString(key)) throw new Error('A Map can only be encoded as JSON if all keys are strings');
                 });
 
                 const arr = [...item];
 
                 return '[' + arr.map(([ key, val ]) => `["${key}",${recStringify(val, pathArr.concat([ ['m', key] ]))}]`).join(',') + ']';
 
-            } else if(_.isSet(item)) {
+            } else if(isSet(item)) {
 
                 msArr = msArr.concat([pathArr.concat([ ['s', ''] ])]);
 
@@ -114,7 +115,7 @@ const JsonNext = {
             throw new Error(e);
         }
 
-        if(_.isPlainObject(origData) && _.isArray(origData.json_next_paths)) {
+        if(isPlainObject(origData) && isArray(origData.json_next_paths)) {
 
             const data = origData.data;
             const pathsArr = origData.json_next_paths.concat().sort((a, b) => a.length < b.length);

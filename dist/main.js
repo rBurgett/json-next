@@ -4,22 +4,38 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         * Encode and parse JavaScript data types including Map and Set
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         * @module json-next
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         * @type {Object}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         */
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
+/**
+* Encode and parse JavaScript data types including Map and Set
+* @module json-next
+* @type {Object}
+*/
+
+// import _ from 'lodash';
+
 // if(!_.isMap) _.isMap = (item) => _.isObject(item) && _.isFunction(item.get) && _.isFunction(item.set) && _.isFunction(item.entries);
 // if(!_.isSet) _.isSet = (item) => _.isObject(item) && _.isFunction(item.has) && _.isFunction(item.add) && _.isFunction(item.entries);
+
+var isArray = function isArray(item) {
+    return (typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object' && Array.isArray(item) === true;
+};
+var isPlainObject = function isPlainObject(item) {
+    return (typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object' && Array.isArray(item) === false && !item.entries;
+};
+var isMap = function isMap(item) {
+    return (typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object' && Array.isArray(item) === false && typeof item.entries === 'function' && typeof item.get === 'function' && typeof item.set === 'function';
+};
+var isSet = function isSet(item) {
+    return (typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object' && Array.isArray(item) === false && typeof item.entries === 'function' && typeof item.add === 'function';
+};
+var isString = function isString(item) {
+    return typeof item === 'string';
+};
 
 var mapifySetifyByPath = function mapifySetifyByPath(data, pathArr) {
 
@@ -87,20 +103,20 @@ var JsonNext = {
             var pathArr = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
 
 
-            if (_lodash2.default.isArray(item)) {
+            if (isArray(item)) {
                 return '[' + item.map(function (d, i) {
                     return recStringify(d, pathArr.concat([['a', i]]));
                 }).join(',') + ']';
-            } else if (_lodash2.default.isPlainObject(item)) {
+            } else if (isPlainObject(item)) {
                 return '{' + Object.keys(item).map(function (k) {
                     return '"' + k + '":' + recStringify(item[k], pathArr.concat([['o', k]]));
                 }).join(',') + '}';
-            } else if (_lodash2.default.isMap(item)) {
+            } else if (isMap(item)) {
 
                 msArr = msArr.concat([pathArr.concat([['m', '']])]);
 
                 item.forEach(function (val, key) {
-                    if (!_lodash2.default.isString(key)) throw new Error('A Map can only be encoded as JSON if all keys are strings');
+                    if (!isString(key)) throw new Error('A Map can only be encoded as JSON if all keys are strings');
                 });
 
                 var arr = [].concat(_toConsumableArray(item));
@@ -112,7 +128,7 @@ var JsonNext = {
                     var val = _ref6[1];
                     return '["' + key + '",' + recStringify(val, pathArr.concat([['m', key]])) + ']';
                 }).join(',') + ']';
-            } else if (_lodash2.default.isSet(item)) {
+            } else if (isSet(item)) {
 
                 msArr = msArr.concat([pathArr.concat([['s', '']])]);
 
@@ -153,7 +169,7 @@ var JsonNext = {
             throw new Error(e);
         }
 
-        if (_lodash2.default.isPlainObject(origData) && _lodash2.default.isArray(origData.json_next_paths)) {
+        if (isPlainObject(origData) && isArray(origData.json_next_paths)) {
 
             var data = origData.data;
             var pathsArr = origData.json_next_paths.concat().sort(function (a, b) {
